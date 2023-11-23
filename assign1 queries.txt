@@ -1,0 +1,49 @@
+
+1) Display the name of all employees whose salary is between 500 and 1300.
+
+select ename, salary from emp where salary between 500 and 1300;
+
+
+
+2) Display the name of all employees who are in HR dept.
+
+
+select ename from(select ename, emp.deptid, dept.deptname from emp join dept on emp.deptid=dept.deptid) d  where deptname='HR';
+
+
+
+3) Display the name of all the dept and count of all the employees in that dept.
+
+select deptname,count(ename) from(select deptname,ename from emp right join dept on emp.deptid-dept.deptid) as c group by deptname;
+
+
+
+4) Display the name , deptname and salary of the employee whose salary is highest.
+
+select* from(select ename,salary,deptname from emp inner join dept on emp.deptid=dept.deptid) as m order by salary desc limit 1;
+
+
+
+5) Display the name , deptname and salary of the employee whose salary is lowest.
+
+select* from(select ename,salary,deptname from emp inner join dept on emp.deptid=dept.deptid) as m order by salary asc limit 1;
+
+
+
+6) Display the name , deptname of employee whose salary is second highest.
+
+select* from(select ename,salary,deptname from emp inner join dept on emp.deptid=dept.deptid) as m order by salary desc limit 1 offset 1;
+
+
+
+7) Display the name, deptname of top five earning employees.
+
+select* from(select ename,deptname,salary from emp inner join dept on emp.deptid=dept.deptid) as e order by salary desc limit 5;
+
+
+
+8) Display the deptname, name of top 5 earning employees from each dept.
+
+(select deptname,ename,salary from (select ename,salary,deptname from dept join emp on emp.deptid=dept.deptid) s where deptname in ('HR') order by deptname,salary desc limit 5) union
+(select deptname,ename,salary from (select ename,salary,deptname from dept join emp on emp.deptid=dept.deptid) s where deptname in ('IT') order by deptname,salary desc limit 5) union
+(select deptname,ename,salary from (select ename,salary,deptname from dept join emp on emp.deptid=dept.deptid) s where deptname in ('Finance') order by deptname,salary desc limit 5);
