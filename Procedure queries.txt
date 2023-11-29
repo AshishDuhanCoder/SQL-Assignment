@@ -1,0 +1,34 @@
+Que - Write a procedure that takes input a string and returns name of all the tables and their corresponding columns which contain that string as part of the actual data anywhere
+
+
+create procedure sp_extract(dbname varchar(100))
+begin
+declare tname varchar(100);
+declare flag int default 0;
+declare sqlcmd varchar(100);
+declare c1 cursor for
+select table_name,column_name
+    from information_schema.tables
+    where table_schema = dbname and table_type='BASE TABLE';
+declare continue handler for not found set flag = 1;
+drop table if exists tbcnt1;
+create temporary table tbcnt(tabname varchar(100), cnt int);
+open c1;
+myloop:loop
+fetch c1 into tname;
+if flag=1 then
+leave myloop;
+else
+set @sqlcmd=concat('select * from ',tname);
+prepare stmt from @sqlcmd;
+execute stmt;
+insert into tbcnt(tabname) values (tname);
+end if;
+end loop myloop;
+close c1;
+select * from tbcnt;
+drop table if exists tbcnt;
+end;
+$$
+delimiter ; 
+
